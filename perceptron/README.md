@@ -1,9 +1,8 @@
 
 # Q: generate a perceptron in plain vanilla python code with numpy
 
-A:
 
-To create a simple Perceptron using **plain Python** and **NumPy** (which I assume you meant by `pynum`), we'll implement the following:
+A: To create a simple Perceptron using **plain Python** and **NumPy**, we'll implement the following:
 
 - The Perceptron will consist of a single layer with weights and a bias term.
 - We'll use the **step function** (a simple threshold function) for classification (outputting 0 or 1).
