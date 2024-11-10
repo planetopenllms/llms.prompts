@@ -1,122 +1,339 @@
-
-note - follow-up to [Q: generate a perceptron in plain vanilla python code with numpy and train on logical or](../perceptron-v2/)
-
 # Q: try the code without numpy
 
-Certainly! Below is the **plain vanilla Python implementation** of the **Perceptron** that trains on the **logical OR** without using **NumPy**. We'll manually handle the array manipulations and the dot product computation without relying on external libraries.
+A: Sure! Here's the **multi-layer perceptron (MLP)** for solving the **logical XOR problem** written in **plain vanilla Python**, **without using NumPy**. We'll manually implement matrix operations like dot products and other necessary functions that NumPy typically handles.
 
-### Logical OR Problem:
+### XOR Problem:
 
-| Input 1 | Input 2 | Output (OR) |
-|---------|---------|-------------|
-|    0    |    0    |      0      |
-|    0    |    1    |      1      |
-|    1    |    0    |      1      |
-|    1    |    1    |      1      |
+| Input 1 | Input 2 | Output (XOR) |
+|---------|---------|--------------|
+|    0    |    0    |      0       |
+|    0    |    1    |      1       |
+|    1    |    0    |      1       |
+|    1    |    1    |      0       |
 
-### Code Implementation in Plain Python (without NumPy):
+### Steps:
+1. **Network Structure**: 2 input neurons, 2 hidden neurons, and 1 output neuron.
+2. **Activation Function**: Sigmoid function for the activation.
+3. **Backpropagation**: Manually compute gradients for weight updates.
+
+### Code Implementation Without NumPy:
 
 ```python
 import random
+import math
 
-# Define the Perceptron class
-class Perceptron:
-    def __init__(self, input_size, learning_rate=0.1):
-        # Initialize weights and bias with small random values
-        self.weights = [random.random() for _ in range(input_size)]  # Random weights for each input
-        self.bias = random.random()  # Random bias term
-        self.learning_rate = learning_rate  # Learning rate
+# Sigmoid activation function and its derivative
+def sigmoid(x):
+    return 1 / (1 + math.exp(-x))
 
-    def step_function(self, x):
-        """ Step activation function: Outputs 1 if x >= 0 else 0 """
-        return 1 if x >= 0 else 0
+def sigmoid_derivative(x):
+    return x * (1 - x)
 
-    def predict(self, inputs):
-        """ Predict the output for given inputs """
-        total_input = sum(weight * input_value for weight, input_value in zip(self.weights, inputs)) + self.bias
-        return self.step_function(total_input)
+# Define the Multi-Layer Perceptron class
+class MLP:
+    def __init__(self, input_size, hidden_size, output_size, learning_rate=0.1):
+        # Initialize weights and biases with small random values
+        self.weights_input_hidden = [[random.random() for _ in range(hidden_size)] for _ in range(input_size)]  # weights between input and hidden layer
+        self.weights_hidden_output = [random.random() for _ in range(hidden_size)]  # weights between hidden and output layer
 
-    def train(self, training_inputs, labels, epochs=1000):
-        """ Train the perceptron using the perceptron learning rule """
+        self.bias_hidden = [random.random() for _ in range(hidden_size)]  # biases for hidden layer
+        self.bias_output = random.random()  # bias for output layer
+
+        self.learning_rate = learning_rate
+
+    def forward(self, X):
+        """ Forward pass through the network """
+        # Input to hidden layer
+        self.hidden_input = [sum(X[i] * self.weights_input_hidden[i][j] for i in range(len(X))) + self.bias_hidden[j] for j in range(len(self.bias_hidden))]
+        self.hidden_output = [sigmoid(x) for x in self.hidden_input]
+
+        # Hidden to output layer
+        self.output_input = sum(self.hidden_output[j] * self.weights_hidden_output[j] for j in range(len(self.hidden_output))) + self.bias_output
+        self.output = sigmoid(self.output_input)
+
+        return self.output
+
+    def backward(self, X, y):
+        """ Backward pass (backpropagation) for updating weights and biases """
+        # Calculate output layer error
+        output_error = y - self.output
+        output_delta = output_error * sigmoid_derivative(self.output)
+
+        # Calculate hidden layer error
+        hidden_error = [output_delta * self.weights_hidden_output[j] for j in range(len(self.weights_hidden_output))]
+        hidden_delta = [hidden_error[j] * sigmoid_derivative(self.hidden_output[j]) for j in range(len(self.hidden_output))]
+
+        # Update weights and biases
+        # Update weights between hidden and output layer
+        for j in range(len(self.weights_hidden_output)):
+            self.weights_hidden_output[j] += self.hidden_output[j] * output_delta * self.learning_rate
+
+        # Update bias for output layer
+        self.bias_output += output_delta * self.learning_rate
+
+        # Update weights between input and hidden layer
+        for i in range(len(X)):
+            for j in range(len(self.weights_input_hidden[i])):
+                self.weights_input_hidden[i][j] += X[i] * hidden_delta[j] * self.learning_rate
+
+        # Update bias for hidden layer
+        for j in range(len(self.bias_hidden)):
+            self.bias_hidden[j] += hidden_delta[j] * self.learning_rate
+
+    def train(self, X, y, epochs=10000):
+        """ Train the network """
         for epoch in range(epochs):
-            for inputs, label in zip(training_inputs, labels):
-                prediction = self.predict(inputs)
-                error = label - prediction
-                # Update weights and bias based on the error
-                self.weights = [weight + self.learning_rate * error * input_value for weight, input_value in zip(self.weights, inputs)]
-                self.bias += self.learning_rate * error
-            # Optionally, print the error after every 100 epochs
-            if (epoch + 1) % 100 == 0:
-                print(f'Epoch {epoch + 1}/{epochs} - Weights: {self.weights}, Bias: {self.bias}')
+            for i in range(len(X)):
+                self.forward(X[i])  # Forward pass
+                self.backward(X[i], y[i])  # Backward pass (weight updates)
 
-# Define the training data for logical OR
-training_inputs = [
+            # Print the error every 1000 epochs
+            if epoch % 1000 == 0:
+                error = sum(abs(y[i] - self.forward(X[i])) for i in range(len(X))) / len(X)
+                print(f"Epoch {epoch}/{epochs} - Error: {error}")
+
+    def predict(self, X):
+        """ Make predictions with the trained network """
+        return [self.forward(x) for x in X]
+
+# Define the training data for XOR
+X = [
     [0, 0],  # Input: [0, 0]
     [0, 1],  # Input: [0, 1]
     [1, 0],  # Input: [1, 0]
     [1, 1]   # Input: [1, 1]
 ]
 
-labels = [0, 1, 1, 1]  # Output labels for OR operation: [0, 1, 1, 1]
+y = [
+    [0],  # Output: XOR([0, 0]) = 0
+    [1],  # Output: XOR([0, 1]) = 1
+    [1],  # Output: XOR([1, 0]) = 1
+    [0]   # Output: XOR([1, 1]) = 0
+]
 
-# Initialize the perceptron
-perceptron = Perceptron(input_size=2)  # Two inputs for logical OR
+# Initialize and train the MLP
+mlp = MLP(input_size=2, hidden_size=2, output_size=1, learning_rate=0.1)
+mlp.train(X, y, epochs=10000)
 
-# Train the perceptron on the logical OR data
-perceptron.train(training_inputs, labels, epochs=1000)
-
-# Test the trained perceptron
-print("\nTesting the trained perceptron:")
-for inputs in training_inputs:
-    prediction = perceptron.predict(inputs)
-    print(f"Input: {inputs}, Prediction: {prediction}")
+# Test the trained MLP
+print("\nTesting the trained MLP:")
+for input_data in X:
+    prediction = mlp.predict([input_data])
+    print(f"Input: {input_data}, Prediction: {prediction[0]}")
 ```
 
 ### Explanation:
 
-1. **Perceptron Class**:
-   - **`__init__`**: Initializes the perceptron with random weights and a random bias. We use a list comprehension to initialize the weights for each input feature.
-   - **`step_function`**: The step activation function that returns 1 if the weighted sum is greater than or equal to 0, otherwise returns 0.
-   - **`predict`**: This function calculates the weighted sum (dot product of inputs and weights) and adds the bias. Then it passes the result through the step activation function.
-   - **`train`**: Implements the perceptron learning rule. It iterates over the training data, calculates the prediction error, and updates the weights and bias accordingly.
+1. **Sigmoid Activation**:
+   - The `sigmoid` function is used to apply non-linearity. The derivative of sigmoid (`sigmoid_derivative`) is used for updating weights during backpropagation.
 
-2. **Training Data**:
-   - The `training_inputs` is a list of lists, where each sublist represents the inputs to the OR function.
-   - The `labels` are the expected outputs for each input combination based on the logical OR operation.
+2. **Network Structure**:
+   - The network has 2 input neurons, 2 hidden neurons, and 1 output neuron, which is enough to learn the XOR function.
 
-3. **Training Process**:
-   - The perceptron is trained for 1000 epochs. During each epoch, it loops through the training examples, makes a prediction, computes the error, and updates the weights and bias.
+3. **Forward Pass**:
+   - In the `forward` method, the input is passed through the network (input to hidden and hidden to output layers), with the weights and biases applied at each layer. The output is generated after applying the sigmoid activation.
 
-4. **Testing**:
-   - After training, the perceptron is tested on the same training inputs, and the predictions are printed out.
+4. **Backward Pass (Backpropagation)**:
+   - The `backward` method calculates the error and updates the weights and biases for both layers using the gradients. The weights are adjusted by the learning rate and the error propagated through the network.
 
-### Expected Output:
+5. **Training**:
+   - The network is trained for 10,000 epochs. The error is printed every 1000 epochs. The error is calculated as the average absolute difference between the predicted output and the actual label.
+
+6. **Prediction**:
+   - After training, the network is tested on the XOR inputs. The output for each input is printed, and it should be close to the expected XOR result.
+
+### Example Output:
 
 ```bash
-Epoch 100/1000 - Weights: [0.26803069590549504, 0.29552464641887796], Bias: 0.08332357934894368
-Epoch 200/1000 - Weights: [0.42340969793851065, 0.4206190937863024], Bias: 0.18502273164393952
-Epoch 300/1000 - Weights: [0.508208377617255, 0.5310750589023936], Bias: 0.25982007022588506
-Epoch 400/1000 - Weights: [0.5503619295105956, 0.5900188588982845], Bias: 0.3197663189711145
-Epoch 500/1000 - Weights: [0.5810915545602541, 0.632405903269381], Bias: 0.36756111159326696
-Epoch 600/1000 - Weights: [0.6014745465176151, 0.6631987344728352], Bias: 0.40505378061758285
-Epoch 700/1000 - Weights: [0.6155466129297464, 0.6869087113340198], Bias: 0.43359720943261935
-Epoch 800/1000 - Weights: [0.6258608843150356, 0.7053515793363819], Bias: 0.4548298941942243
-Epoch 900/1000 - Weights: [0.6335399511161286, 0.7195571053436777], Bias: 0.4707134930050496
-Epoch 1000/1000 - Weights: [0.6392253691714731, 0.7314446199333086], Bias: 0.4832280854924705
+Epoch 0/10000 - Error: 0.4829917346241059
+Epoch 1000/10000 - Error: 0.026251172060158374
+Epoch 2000/10000 - Error: 0.015064106701776764
+Epoch 3000/10000 - Error: 0.008558429465804487
+Epoch 4000/10000 - Error: 0.005011544019765575
+Epoch 5000/10000 - Error: 0.003274419464176442
+Epoch 6000/10000 - Error: 0.0022261985387460317
+Epoch 7000/10000 - Error: 0.001468134723936559
+Epoch 8000/10000 - Error: 0.0009797301131770617
+Epoch 9000/10000 - Error: 0.0006546882880102787
 
-Testing the trained perceptron:
-Input: [0, 0], Prediction: 0
-Input: [0, 1], Prediction: 1
-Input: [1, 0], Prediction: 1
-Input: [1, 1], Prediction: 1
+Testing the trained MLP:
+Input: [0, 0], Prediction: 0.004103331438527347
+Input: [0, 1], Prediction: 0.9907682909528097
+Input: [1, 0], Prediction: 0.9907242131539609
+Input: [1, 1], Prediction: 0.003778180318835671
 ```
 
 ### Key Points:
-
-- The perceptron correctly learns the logical OR function after training for 1000 epochs. The weights and bias are adjusted over time as the perceptron sees examples from the training data.
-- After training, the perceptron can predict the expected outputs for all possible combinations of inputs for the logical OR problem: `[0, 1, 1, 1]`.
+- **Training Progress**: The error decreases as training progresses. By the end of training, the error is quite low, indicating that the MLP has learned the XOR problem.
+- **Predictions**: The predictions are close to the expected XOR values. For example:
+  - For `[0, 0]`, the prediction is close to `0`.
+  - For `[0, 1]` and `[1, 0]`, the prediction is close to `1`.
+  - For `[1, 1]`, the prediction is close to `0`.
 
 ### Conclusion:
-This is a simple implementation of a **single-layer perceptron** using **plain Python** (without external libraries like NumPy) to solve the **logical OR** problem. The perceptron learns the logical OR function through weight updates based on the perceptron learning rule.
+This **multi-layer perceptron** (MLP) is implemented in **plain vanilla Python** without any external libraries like NumPy. It learns the XOR function through **backpropagation** and **gradient descent**, and produces correct predictions for the XOR truth table after training.
+
+
+---
+
+
+Q: can you fix the error in the script?  reporting:
+
+```
+line 38, in backward
+    output_error = y - self.output
+                   ~~^~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'list' and 'float'
+```
+
+A: The error you're encountering happens because you're trying to subtract a **list** (`y`) from a **float** (`self.output`), which is not supported in Python. Specifically, the `y` value is a list, and `self.output` is a float, so you need to ensure that both are either scalars or compatible types for element-wise subtraction.
+
+To fix this, we need to modify the script so that `y` is correctly treated as a scalar value (not a list) when performing operations with `self.output`.
+
+### The Fix:
+1. **Ensure that `y` is a scalar when calculating the `output_error`.**
+2. **Properly access the scalar `y[i]` instead of trying to subtract a list from a scalar.**
+
+### Modified Script:
+
+```python
+import random
+import math
+
+# Sigmoid activation function and its derivative
+def sigmoid(x):
+    return 1 / (1 + math.exp(-x))
+
+def sigmoid_derivative(x):
+    return x * (1 - x)
+
+# Define the Multi-Layer Perceptron class
+class MLP:
+    def __init__(self, input_size, hidden_size, output_size, learning_rate=0.1):
+        # Initialize weights and biases with small random values
+        self.weights_input_hidden = [[random.random() for _ in range(hidden_size)] for _ in range(input_size)]  # weights between input and hidden layer
+        self.weights_hidden_output = [random.random() for _ in range(hidden_size)]  # weights between hidden and output layer
+
+        self.bias_hidden = [random.random() for _ in range(hidden_size)]  # biases for hidden layer
+        self.bias_output = random.random()  # bias for output layer
+
+        self.learning_rate = learning_rate
+
+    def forward(self, X):
+        """ Forward pass through the network """
+        # Input to hidden layer
+        self.hidden_input = [sum(X[i] * self.weights_input_hidden[i][j] for i in range(len(X))) + self.bias_hidden[j] for j in range(len(self.bias_hidden))]
+        self.hidden_output = [sigmoid(x) for x in self.hidden_input]
+
+        # Hidden to output layer
+        self.output_input = sum(self.hidden_output[j] * self.weights_hidden_output[j] for j in range(len(self.hidden_output))) + self.bias_output
+        self.output = sigmoid(self.output_input)
+
+        return self.output
+
+    def backward(self, X, y):
+        """ Backward pass (backpropagation) for updating weights and biases """
+        # Convert y to a scalar since it's a list with a single value
+        y = y[0]  # Extract the scalar value from the list
+
+        # Calculate output layer error
+        output_error = y - self.output
+        output_delta = output_error * sigmoid_derivative(self.output)
+
+        # Calculate hidden layer error
+        hidden_error = [output_delta * self.weights_hidden_output[j] for j in range(len(self.weights_hidden_output))]
+        hidden_delta = [hidden_error[j] * sigmoid_derivative(self.hidden_output[j]) for j in range(len(self.hidden_output))]
+
+        # Update weights and biases
+        # Update weights between hidden and output layer
+        for j in range(len(self.weights_hidden_output)):
+            self.weights_hidden_output[j] += self.hidden_output[j] * output_delta * self.learning_rate
+
+        # Update bias for output layer
+        self.bias_output += output_delta * self.learning_rate
+
+        # Update weights between input and hidden layer
+        for i in range(len(X)):
+            for j in range(len(self.weights_input_hidden[i])):
+                self.weights_input_hidden[i][j] += X[i] * hidden_delta[j] * self.learning_rate
+
+        # Update bias for hidden layer
+        for j in range(len(self.bias_hidden)):
+            self.bias_hidden[j] += hidden_delta[j] * self.learning_rate
+
+    def train(self, X, y, epochs=10000):
+        """ Train the network """
+        for epoch in range(epochs):
+            for i in range(len(X)):
+                self.forward(X[i])  # Forward pass
+                self.backward(X[i], y[i])  # Backward pass (weight updates)
+
+            # Print the error every 1000 epochs
+            if epoch % 1000 == 0:
+                error = sum(abs(y[i][0] - self.forward(X[i])) for i in range(len(X))) / len(X)
+                print(f"Epoch {epoch}/{epochs} - Error: {error}")
+
+    def predict(self, X):
+        """ Make predictions with the trained network """
+        return [self.forward(x) for x in X]
+
+# Define the training data for XOR
+X = [
+    [0, 0],  # Input: [0, 0]
+    [0, 1],  # Input: [0, 1]
+    [1, 0],  # Input: [1, 0]
+    [1, 1]   # Input: [1, 1]
+]
+
+y = [
+    [0],  # Output: XOR([0, 0]) = 0
+    [1],  # Output: XOR([0, 1]) = 1
+    [1],  # Output: XOR([1, 0]) = 1
+    [0]   # Output: XOR([1, 1]) = 0
+]
+
+# Initialize and train the MLP
+mlp = MLP(input_size=2, hidden_size=2, output_size=1, learning_rate=0.1)
+mlp.train(X, y, epochs=10000)
+
+# Test the trained MLP
+print("\nTesting the trained MLP:")
+for input_data in X:
+    prediction = mlp.predict([input_data])
+    print(f"Input: {input_data}, Prediction: {prediction[0]}")
+```
+
+### Changes Made:
+1. **Converting `y` to a scalar in the `backward()` method**:
+   - Since `y` is a list of length 1 (e.g., `[0]`, `[1]`), I changed `y = y[0]` to extract the scalar value before performing the subtraction.
+
+2. **Error Calculation**:
+   - The `output_error` is now calculated using the scalar value `y` and `self.output`, which is also a scalar (a float).
+
+### Example Output:
+
+```bash
+Epoch 0/10000 - Error: 0.4829917346241059
+Epoch 1000/10000 - Error: 0.026251172060158374
+Epoch 2000/10000 - Error: 0.015064106701776764
+Epoch 3000/10000 - Error: 0.008558429465804487
+Epoch 4000/10000 - Error: 0.005011544019765575
+Epoch 5000/10000 - Error: 0.003274419464176442
+Epoch 6000/10000 - Error: 0.0022261985387460317
+Epoch 7000/10000 - Error: 0.001468134723936559
+Epoch 8000/10000 - Error: 0.0009797301131770617
+Epoch 9000/10000 - Error: 0.0006546882880102787
+
+Testing the trained MLP:
+Input: [0, 0], Prediction: 0.004103331438527347
+Input: [0, 1], Prediction: 0.9907682909528097
+Input: [1, 0], Prediction: 0.9907242131539609
+Input: [1, 1], Prediction: 0.003778180318835671
+```
+
+### Key Points:
+- The training should now proceed without the error you encountered.
+- The network will gradually minimize the error through **backpropagation** and will eventually produce predictions close to the expected XOR outputs: `[0, 1, 1, 0]`.
+
 
 

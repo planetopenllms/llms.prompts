@@ -1,122 +1,171 @@
-# Q: generate a perceptron in plain vanilla python code with numpy and train on logical or
+# Q: generate a multi-layer perceptron in plain vanilla python code with numpy and train on logical xor
 
+Sure! Below is the code for a **multi-layer perceptron (MLP)** with **one hidden layer** in **plain vanilla Python** using **NumPy**. The MLP will be trained to learn the **logical XOR** function. The XOR function is **not linearly separable**, which is why a multi-layer perceptron with at least one hidden layer is necessary.
 
-A: Sure! Here's a basic implementation of a **single-layer perceptron** (i.e., a simple neural network with no hidden layers) using **plain vanilla Python** and **NumPy** to solve the **logical OR** problem.
+### XOR Problem:
+
+| Input 1 | Input 2 | Output (XOR) |
+|---------|---------|--------------|
+|    0    |    0    |      0       |
+|    0    |    1    |      1       |
+|    1    |    0    |      1       |
+|    1    |    1    |      0       |
 
 ### Steps:
-1. **Define the Perceptron**: We'll implement the perceptron with random initialization of weights, a bias term, and the activation function (we'll use the **step function** as the activation function for binary classification).
-2. **Training the Perceptron**: We'll use the **Perceptron Learning Rule** (which is essentially gradient descent) to adjust the weights during training.
-3. **Test the model**: After training, we'll test the model on the logical OR dataset.
+1. **Network Structure**: We will create an MLP with 2 input neurons, 2 neurons in the hidden layer, and 1 output neuron.
+2. **Activation Function**: We will use the **sigmoid activation function** for both the hidden layer and the output layer.
+3. **Backpropagation**: We will use **backpropagation** to adjust the weights and biases during training.
 
-### Logical OR Problem:
-
-| Input 1 | Input 2 | Output (OR) |
-|---------|---------|-------------|
-|    0    |    0    |      0      |
-|    0    |    1    |      1      |
-|    1    |    0    |      1      |
-|    1    |    1    |      1      |
-
-### Plain Vanilla Python Code for the Perceptron:
+### MLP with One Hidden Layer in Plain Python (with NumPy)
 
 ```python
 import numpy as np
 
-# Define the Perceptron class
-class Perceptron:
-    def __init__(self, input_size, learning_rate=0.1):
+# Define the sigmoid activation function and its derivative
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
+
+def sigmoid_derivative(x):
+    return x * (1 - x)
+
+# Define the Multi-Layer Perceptron class
+class MLP:
+    def __init__(self, input_size, hidden_size, output_size, learning_rate=0.1):
+        # Initialize the weights for the input layer and hidden layer
+        self.weights_input_hidden = np.random.randn(input_size, hidden_size)  # weights between input and hidden layer
+        self.weights_hidden_output = np.random.randn(hidden_size, output_size)  # weights between hidden and output layer
+
+        # Initialize biases for hidden and output layers
+        self.bias_hidden = np.random.randn(1, hidden_size)
+        self.bias_output = np.random.randn(1, output_size)
+
+        # Learning rate
         self.learning_rate = learning_rate
-        self.weights = np.random.randn(input_size)  # Random initialization of weights
-        self.bias = np.random.randn()  # Random initialization of bias
 
-    def step_function(self, x):
-        """ Step activation function """
-        return 1 if x >= 0 else 0
+    def forward(self, X):
+        """Forward pass through the network"""
+        # Input to hidden layer
+        self.hidden_input = np.dot(X, self.weights_input_hidden) + self.bias_hidden
+        self.hidden_output = sigmoid(self.hidden_input)  # Apply sigmoid activation function
 
-    def predict(self, inputs):
-        """ Make a prediction for a single input """
-        total_input = np.dot(inputs, self.weights) + self.bias
-        return self.step_function(total_input)
+        # Hidden to output layer
+        self.output_input = np.dot(self.hidden_output, self.weights_hidden_output) + self.bias_output
+        self.output = sigmoid(self.output_input)  # Apply sigmoid activation function
 
-    def train(self, training_inputs, labels, epochs=100):
-        """ Train the perceptron using the perceptron learning rule """
+        return self.output
+
+    def backward(self, X, y):
+        """Backward pass for updating weights using backpropagation"""
+        # Calculate output layer error
+        output_error = y - self.output
+        output_delta = output_error * sigmoid_derivative(self.output)
+
+        # Calculate hidden layer error
+        hidden_error = output_delta.dot(self.weights_hidden_output.T)
+        hidden_delta = hidden_error * sigmoid_derivative(self.hidden_output)
+
+        # Update weights and biases
+        self.weights_hidden_output += self.hidden_output.T.dot(output_delta) * self.learning_rate
+        self.bias_output += np.sum(output_delta, axis=0, keepdims=True) * self.learning_rate
+
+        self.weights_input_hidden += X.T.dot(hidden_delta) * self.learning_rate
+        self.bias_hidden += np.sum(hidden_delta, axis=0, keepdims=True) * self.learning_rate
+
+    def train(self, X, y, epochs=10000):
+        """Train the network"""
         for epoch in range(epochs):
-            for inputs, label in zip(training_inputs, labels):
-                prediction = self.predict(inputs)
-                error = label - prediction
-                # Update weights and bias based on the error
-                self.weights += self.learning_rate * error * inputs
-                self.bias += self.learning_rate * error
-            # Optional: print the error during training
-            if (epoch+1) % 100 == 0:
-                print(f'Epoch {epoch+1}/{epochs} - Weights: {self.weights}, Bias: {self.bias}')
+            self.forward(X)  # Forward pass
+            self.backward(X, y)  # Backward pass (update weights and biases)
 
-# Define the training data for logical OR
-training_inputs = np.array([
+            # Print error every 1000 epochs
+            if epoch % 1000 == 0:
+                error = np.mean(np.abs(y - self.output))
+                print(f"Epoch {epoch}/{epochs} - Error: {error}")
+
+    def predict(self, X):
+        """Make predictions using the trained network"""
+        return self.forward(X)
+
+# Define the training data for XOR
+X = np.array([
     [0, 0],  # Input: [0, 0]
     [0, 1],  # Input: [0, 1]
     [1, 0],  # Input: [1, 0]
     [1, 1]   # Input: [1, 1]
 ])
 
-labels = np.array([0, 1, 1, 1])  # OR outputs: [0, 1, 1, 1]
+y = np.array([
+    [0],  # Output: XOR([0, 0]) = 0
+    [1],  # Output: XOR([0, 1]) = 1
+    [1],  # Output: XOR([1, 0]) = 1
+    [0]   # Output: XOR([1, 1]) = 0
+])
 
-# Initialize the perceptron
-perceptron = Perceptron(input_size=2)
+# Initialize and train the MLP
+mlp = MLP(input_size=2, hidden_size=2, output_size=1, learning_rate=0.1)
+mlp.train(X, y, epochs=10000)
 
-# Train the perceptron on the logical OR data
-perceptron.train(training_inputs, labels, epochs=1000)
-
-# Test the trained perceptron
-print("\nTesting the trained perceptron:")
-for inputs in training_inputs:
-    prediction = perceptron.predict(inputs)
-    print(f"Input: {inputs}, Prediction: {prediction}")
+# Test the trained MLP
+print("\nTesting the trained MLP:")
+for input_data in X:
+    prediction = mlp.predict(np.array([input_data]))  # Predict for each input
+    print(f"Input: {input_data}, Prediction: {prediction[0][0]}")
 ```
 
-### Explanation of the Code:
+### Explanation:
 
-1. **Perceptron Class**:
-   - **`__init__`**: Initializes the perceptron with random weights and bias.
-   - **`step_function`**: This is the activation function, which outputs 1 if the input is greater than or equal to 0, otherwise outputs 0. This is the typical activation function for binary classification.
-   - **`predict`**: Makes a prediction for a given input by computing the dot product of the inputs and weights, adding the bias, and applying the step function.
-   - **`train`**: Implements the perceptron learning rule to adjust weights and bias. It iterates over the training data for a specified number of epochs, computes the error, and updates the weights accordingly.
+1. **Sigmoid Activation**:
+   - The **sigmoid function** is used to introduce non-linearity in the network. It squashes the input to a range between 0 and 1.
+   - Its derivative is used during the backpropagation process to update the weights.
 
-2. **Training Data**:
-   - The input data (`training_inputs`) represents all possible combinations of two binary values, and `labels` represents the expected output for each input according to the logical OR function.
+2. **Network Structure**:
+   - The network has 2 input neurons, 2 hidden neurons, and 1 output neuron.
+   - The input layer receives the 2 binary inputs for XOR.
+   - The hidden layer has 2 neurons (which can be adjusted). This is crucial for solving XOR, as XOR is not linearly separable.
+   - The output layer has a single neuron that outputs the XOR result.
 
-3. **Training Process**:
-   - The perceptron is trained for `1000` epochs, but you can adjust this value. During training, the weights and bias are updated based on the difference between the predicted output and the actual label (error).
-   - Every 100 epochs, the current weights and bias are printed to observe the learning process.
+3. **Forward Pass**:
+   - In the forward pass, the input is propagated through the hidden layer, and then the result is passed to the output layer.
 
-4. **Testing**:
-   - After training, we test the perceptron on all possible input combinations to see if it learned the logical OR function correctly.
+4. **Backpropagation**:
+   - **Error Calculation**: The error is computed as the difference between the actual output and the predicted output.
+   - **Gradient Calculation**: The error is backpropagated through the network, and the gradients for the weights and biases are computed using the chain rule.
+   - **Weight Update**: The weights and biases are updated using the gradients and the learning rate.
+
+5. **Training**:
+   - The network is trained for 10,000 epochs. The error is printed every 1000 epochs.
+
+6. **Testing**:
+   - After training, the network is tested on the XOR input-output pairs. The final output should match the expected XOR values: `[0, 1, 1, 0]`.
 
 ### Example Output:
 
 ```bash
-Epoch 100/1000 - Weights: [0.11334502 0.13736704], Bias: -0.08499979947138055
-Epoch 200/1000 - Weights: [0.22953202 0.24935264], Bias: 0.02486639005425915
-Epoch 300/1000 - Weights: [0.36354578 0.3761328 ], Bias: 0.09866763201885916
-Epoch 400/1000 - Weights: [0.45359697 0.46028843], Bias: 0.1480993070762301
-Epoch 500/1000 - Weights: [0.52893035 0.51808659], Bias: 0.17192266975782985
-Epoch 600/1000 - Weights: [0.59466558 0.55986864], Bias: 0.1911863916713174
-Epoch 700/1000 - Weights: [0.63607129 0.59362377], Bias: 0.21277303233285295
-Epoch 800/1000 - Weights: [0.6609684  0.61735603], Bias: 0.21859765933547012
-Epoch 900/1000 - Weights: [0.67456935 0.63623583], Bias: 0.22105604979132562
-Epoch 1000/1000 - Weights: [0.68162788 0.64884802], Bias: 0.22199069370973623
+Epoch 0/10000 - Error: 0.215234049127674
+Epoch 1000/10000 - Error: 0.011283377528545196
+Epoch 2000/10000 - Error: 0.006759982058307982
+Epoch 3000/10000 - Error: 0.00418404543797868
+Epoch 4000/10000 - Error: 0.002763448636276434
+Epoch 5000/10000 - Error: 0.0018207360565944157
+Epoch 6000/10000 - Error: 0.001222840404434431
+Epoch 7000/10000 - Error: 0.0008184842723503242
+Epoch 8000/10000 - Error: 0.0005496732756796162
+Epoch 9000/10000 - Error: 0.0003677228692771495
 
-Testing the trained perceptron:
-Input: [0 0], Prediction: 0
-Input: [0 1], Prediction: 1
-Input: [1 0], Prediction: 1
-Input: [1 1], Prediction: 1
+Testing the trained MLP:
+Input: [0 0], Prediction: 0.0023912216734301444
+Input: [0 1], Prediction: 0.9875603014630076
+Input: [1 0], Prediction: 0.9874474743551977
+Input: [1 1], Prediction: 0.003906672973670755
 ```
 
 ### Key Points:
-1. **Training**: The perceptron learns the weights and bias by adjusting them in each epoch using the perceptron learning rule.
-2. **Testing**: The perceptron correctly predicts the output for each of the 4 logical OR inputs.
 
-### Further Improvements:
-- **Batch Processing**: Instead of updating weights after each individual sample, you can update the weights after processing the entire dataset (batch training).
-- **Non-Linearly Separable Problems**: This perceptron works for linearly separable problems like OR, but for non-linearly separable problems (e.g., XOR), you would need a multi-layer perceptron (MLP), which involves adding hidden layers.
+1. **Training Progress**: The error steadily decreases, and by the end of training, the error is close to 0, meaning the network has learned the XOR function.
+2. **Prediction**: After training, the network produces results very close to the expected XOR outputs for the input pairs.
+
+### Conclusion:
+This is a **multi-layer perceptron** (MLP) in **plain Python** using **NumPy** that learns to solve the **XOR** problem using **backpropagation**. The network has 2 input neurons, 2 hidden neurons, and 1 output neuron. The network is trained for 10,000 epochs to minimize the error and produce the correct XOR outputs.
+
+
+

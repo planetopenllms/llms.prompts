@@ -34,9 +34,6 @@ class MLP:
 
     def backward(self, X, y):
         """ Backward pass (backpropagation) for updating weights and biases """
-        # Convert y to a scalar since it's a list with a single value
-        y = y[0]  # Extract the scalar value from the list
-
         # Calculate output layer error
         output_error = y - self.output
         output_delta = output_error * sigmoid_derivative(self.output)
@@ -71,7 +68,7 @@ class MLP:
 
             # Print the error every 1000 epochs
             if epoch % 1000 == 0:
-                error = sum(abs(y[i][0] - self.forward(X[i])) for i in range(len(X))) / len(X)
+                error = sum(abs(y[i] - self.forward(X[i])) for i in range(len(X))) / len(X)
                 print(f"Epoch {epoch}/{epochs} - Error: {error}")
 
     def predict(self, X):
