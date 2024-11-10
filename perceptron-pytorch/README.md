@@ -1,3 +1,6 @@
+note - xor not possible with single-layer perceptron, change to train on logical and or or.  see [Q: explain if you can train with success a single-layer perceptron on logical xor](non-linear/)
+
+
 # Q: generate a perceptron in python code with pytorch
 
 
