@@ -48,3 +48,12 @@ Theory
 
 
 
+History
+
+- [Q: timeline of a.i. research](history/timeline-ai/)
+- [Q: timeline of a.i. research in neural networks](history/timeline-ai-nn/)
+- [Q: timeline of a.i. research in neural networks with transformers and attention](history/timeline-ai-nn-transformers/)
+
+
+
+
