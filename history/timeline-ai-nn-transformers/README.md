@@ -1,4 +1,4 @@
-Q: timeline of a.i. research in neural networks with transformers and attention
+# Q: timeline of a.i. research in neural networks with transformers and attention
 
 A: The development of **neural networks** with **transformers** and **attention mechanisms** represents one of the most significant breakthroughs in modern AI. These innovations have revolutionized fields like **natural language processing (NLP)**, **computer vision**, and **reinforcement learning**. Here's a detailed timeline focusing specifically on **transformers**, **attention mechanisms**, and the progression of neural network research that led to these breakthroughs.
 
@@ -101,9 +101,7 @@ A: The development of **neural networks** with **transformers** and **attention 
 
 5. **Vision Transformers (ViT)** (2020): Demonstrate the effectiveness of transformers in tasks traditionally dominated by CNNs, such as image classification.
 
-6
-
-. **Multimodal Transformers** (2021-2023): Models like **DALL·E**, **CLIP**, and **Flamingo** demonstrate the ability of transformers to handle both visual and textual information, marking a new era in AI.
+6. **Multimodal Transformers** (2021-2023): Models like **DALL·E**, **CLIP**, and **Flamingo** demonstrate the ability of transformers to handle both visual and textual information, marking a new era in AI.
 
 ---
 
