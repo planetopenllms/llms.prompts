@@ -1,6 +1,8 @@
 # Q: can you explain transformers with attention mechanisms?
 
-A: ### Transformers with Attention Mechanisms
+A:
+
+### Transformers with Attention Mechanisms
 
 Transformers, with their **self-attention** mechanisms, have become one of the most influential breakthroughs in neural networks, particularly in natural language processing (NLP) and computer vision. They address several limitations of previous models, such as **Recurrent Neural Networks (RNNs)** and **Long Short-Term Memory networks (LSTMs)**, by removing the sequential nature of processing and enabling models to handle long-range dependencies more effectively. Below, I'll explain how **transformers** work, focusing on **attention mechanisms**.
 
