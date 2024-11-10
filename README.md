@@ -20,8 +20,8 @@ _Vanilla Python with/without NumPy_
 
 <!-- multi-layer perceptrons (mlp) -->
 
-- [Q: generate a multi-layer perceptron in plain vanilla python code with numpy and train on logical xor](percpetron-v2/)
-  - [Q: try the code without numpy](percpetron-v2b/)
+- [Q: generate a multi-layer perceptron in plain vanilla python code with numpy and train on logical xor](perceptron-v2/)
+  - [Q: try the code without numpy](perceptron-v2b/)
 
 
 
