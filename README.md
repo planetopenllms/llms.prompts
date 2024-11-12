@@ -46,6 +46,7 @@ Theory
 - [Q: what is the best multi-layer perceptron configuration to train with success a perceptron on logical xor](theory/xor-model/)
   - note - includes running sample code in python with pytorch!
 - [Q: what's the difference between gpt and bert neural networks?](theory/gpt-vs-bert/)
+- [Q: can you explain the word2vec neural network model?](theory/word2vec/)
 - [Q: can you explain transformers with attention mechanisms?](theory/transformers/)
 - [Q: can large language model think?](theory/think/)
 
@@ -59,4 +60,12 @@ History
 - [Q: timeline of decoder-only transformer neural network models](history/timeline-ai-nn-transformers-decode/)
 
 
+
+
+
+> that's all for today. thank you.
+>
+>> You're very welcome! I'm glad I could help.
+>> If you have more questions in the future,
+>> don't hesitate to reach out. Have a great day!
 
