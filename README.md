@@ -41,12 +41,14 @@ _With PyTorch_
 
 Theory
 
+- [Q: what is a single-layer perceptron?](theory/perceptron/)
 - [Q: explain if you can train with success a single-layer perceptron on logical xor](theory/non-linear/)
 - [Q: what is the best multi-layer perceptron configuration to train with success a perceptron on logical xor](theory/xor-model/)
   - note - includes running sample code in python with pytorch!
 - [Q: what's the difference between gpt and bert neural networks?](theory/gpt-vs-bert/)
 - [Q: can you explain transformers with attention mechanisms?](theory/transformers/)
 - [Q: can large language model think?](theory/think/)
+
 
 
 History
