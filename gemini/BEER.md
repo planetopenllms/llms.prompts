@@ -1,12 +1,12 @@
-# More Google Gemini Sample Prompts
+# More Google Gemini Sample Prompts (Beer Edition)
 
 Model - gemini-1.5-flash
 
 
-# Q: name all the belgian trappist beers and monasteries
+## Q: name all the belgian trappist beers and monasteries
 
 
-Here are the Belgian Trappist beers and their associated monasteries:
+A: Here are the Belgian Trappist beers and their associated monasteries:
 
 **Beer** | **Monastery**
 ------- | --------
@@ -40,6 +40,37 @@ Here are the Belgian Trappist beers and their associated monasteries:
 
 This list includes only the beers that meet these criteria. There are other beers that are sometimes called "Trappist-style" or "Trappist-inspired," but they don't officially meet the requirements.
 
+
+
+## Q: name some belgian lambic beers and breweries
+
+A: Belgian Lambic Beers & Breweries:
+
+**Breweries:**
+
+* **3 Fonteinen:** One of the most highly regarded lambic producers, known for their complex and long-aged beers.
+* **Cantillon:** A historic brewery known for their traditional lambic production methods and wide range of styles.
+* **De Cambrinus:** A smaller brewery known for their unique and experimental lambic blends.
+* **Drie Fonteinen:** A brewery known for its lambic beers, especially the "Framboise" and "Kriek" fruit lambics.
+* **Girardin:** A brewery known for their "Gueuze" lambics and a wide selection of other beers.
+* **Lindemans:** A large brewery known for their fruit lambics, like "Fraise" and "Pêche."
+* **Mort Subite:** Known for their "Gueuze" lambics and their unique bottle design.
+* **Oude Geuze Boon:** A brewery known for their "Oude Geuze" lambics and a focus on traditional methods.
+* **Tilquin:** A brewery that uses traditional lambic techniques with a focus on innovation and unique flavors.
+* **Hanssens Artisanaal:** A brewery that focuses on traditional lambic production and has a wide range of styles.
+
+**Lambic Beers:**
+
+* **Gueuze:** A blended lambic that undergoes a secondary fermentation in the bottle, resulting in a complex and tart beer.
+* **Oude Geuze:** A traditional lambic that has aged for at least 3 years and has a complex and intense flavor.
+* **Fruit Lambic:** A lambic that is infused with fruit, such as cherries, raspberries, or peaches.
+* **Kriek:** A lambic infused with cherries, often aged in oak barrels.
+* **Framboise:** A lambic infused with raspberries, often aged in oak barrels.
+* **Pêche:** A lambic infused with peaches, often aged in oak barrels.
+* **Lambic:** The original and unblended beer, known for its tartness and complexity.
+
+
+**Note:** There are many other excellent lambic breweries and beers available. This list is just a starting point to help you explore the world of Belgian lambic.
 
 
 
