@@ -48,6 +48,9 @@ Theory
 - [Q: what's the difference between gpt and bert neural networks?](theory/gpt-vs-bert/)
 - [Q: can you explain the word2vec neural network model?](theory/word2vec/)
 - [Q: can you explain transformers with attention mechanisms?](theory/transformers/)
+- [Q: what are some options for positional encoding of word embeddings?](theory/pos-encoding/)
+- [Q: what differences are there in the neural network layers of gpt 2 and llama 3?](theory/gpt-vs-llama/)
+- [Q: what are the memory requirements for gpt-2?](theory/gpt-memory/)
 - [Q: can large language model think?](theory/think/)
 
 
