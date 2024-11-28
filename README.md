@@ -47,10 +47,12 @@ Theory
   - note - includes running sample code in python with pytorch!
 - [Q: what's the difference between gpt and bert neural networks?](theory/gpt-vs-bert/)
 - [Q: can you explain the word2vec neural network model?](theory/word2vec/)
-- [Q: can you explain transformers with attention mechanisms?](theory/transformers/)
 - [Q: what are some options for positional encoding of word embeddings?](theory/pos-encoding/)
+- [Q: what are the pro and cons of byte pair encoding tokenizers compared to alternatives?](theory/bpe-vs-others/)
+- [Q: can you explain transformers with attention mechanisms?](theory/transformers/)
 - [Q: what differences are there in the neural network layers of gpt 2 and llama 3?](theory/gpt-vs-llama/)
 - [Q: what are the memory requirements for gpt-2?](theory/gpt-memory/)
+- [Q: how is the gpt-3 neural network architecture different from gpt-2?](theory/gpt2-vs-gpt3/)
 - [Q: can large language model think?](theory/think/)
 
 
