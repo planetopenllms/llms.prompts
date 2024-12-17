@@ -1,10 +1,4 @@
-# llms.sandbox
-
-(Code) Sandbox
-
-
-
-Sample Prompts
+# LLMS Prompts (Q&As and More)
 
 
 ChatGPT (4o mini)
