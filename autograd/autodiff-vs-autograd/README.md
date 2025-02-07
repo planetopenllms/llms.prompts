@@ -1,5 +1,5 @@
 
-# Q: how is the automatic differentation, that is, autodiff in tensorflow different from autograd in pytorch?
+# Q: how is the automatic differentiation, that is, autodiff in tensorflow different from autograd in pytorch?
 
 a:  The differences between **TensorFlow's automatic differentiation** (via `tf.GradientTape`) and **PyTorch's autograd** (Automatic Differentiation) system are subtle but important. Both frameworks essentially serve the same purpose—computing gradients for optimization tasks—but the underlying implementations, design philosophies, and user experience differ in a few ways. Let's dive into the key points of comparison:
 
