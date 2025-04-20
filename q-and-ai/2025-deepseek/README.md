@@ -1,0 +1,17 @@
+# Q and AI with DeepSeek (2025)
+
+
+- [q: in deep learning, we often use the terms embedding vectors, representations, and latent space. what do these concepts have in common, and how do they differ?](01.md) 
+- [q: what is self-supervised learning, when is it useful, and what are the main approaches to implement it?](02.md)
+- [q: what are the main factors that have contributed to the success of transformers?](08.md)
+- [q: what are the popular categories of deep generative models in deep learning (also called generative ai), and what are their respective downsides?](09.md)
+- [q: what is the distributional hypothesis in natural language processing (nlp)? where is it used, and how far does it hold true?](14.md)
+- [q: where does self-attention get its name, and how is it different from previously developed attention mechanisms?](16.md)
+
+
+
+
+
+
+
+
